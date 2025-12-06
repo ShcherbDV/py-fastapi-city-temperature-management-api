@@ -13,4 +13,12 @@ class Temperature(TemperatureBase):
     id: int
 
     class Config:
-        from_attribute = True
+        from_attributes = True
+
+
+class TemperatureUpdate(BaseModel):
+    updated: int
+    failed: int
+    successes: list
+    failures: list
+

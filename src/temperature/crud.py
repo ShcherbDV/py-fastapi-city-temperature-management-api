@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from http.client import HTTPException
+from fastapi import HTTPException
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,7 +12,7 @@ from src.temperature.weather_service import fetch_temperature_for_city
 async def get_all_temperatures(db: AsyncSession, city_id: int | None = None):
     query = select(temperature_models.TemperatureModel)
 
-    if city_id:
+    if city_id is not None:
         query = query.where(temperature_models.TemperatureModel.city_id == city_id)
 
     result = await db.execute(query)
@@ -43,10 +43,13 @@ async def update_all_temperatures(db: AsyncSession):
         except HTTPException as e:
             failures.append({"city": city.name, "error": e.detail})
         except Exception as e:
-            await db.rollback()
             failures.append({"city": city.name, "error": str(e)})
 
-    await db.commit()
+    try:
+        await db.commit()
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail=f"Could not update temperatures: {str(e)}")
 
     return {
         "updated": len(successes),

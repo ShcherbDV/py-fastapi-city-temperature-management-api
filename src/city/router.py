@@ -5,7 +5,7 @@ from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.city import crud, schemas
-from src.dependenceis import get_db
+from src.dependencies import get_db
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ async def get_cities(db: AsyncSession = Depends(get_db)):
     return await crud.get_all_cities(db)
 
 @router.post("/cities/", response_model=schemas.City)
-async def create_citi(city: schemas.CityCreate, db: AsyncSession = Depends(get_db)):
+async def create_city(city: schemas.CityCreate, db: AsyncSession = Depends(get_db)):
     return await crud.create_city(db=db, city=city)
 
 @router.get("/cities/{city_id}", response_model=schemas.City)
