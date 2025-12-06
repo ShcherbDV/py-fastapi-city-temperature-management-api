@@ -15,7 +15,7 @@ async def get_cities(db: AsyncSession = Depends(get_db)):
 
 @router.post("/cities/", response_model=schemas.City)
 async def create_citi(city: schemas.CityCreate, db: AsyncSession = Depends(get_db)):
-    return await crud.create_citi(db=db, city=city)
+    return await crud.create_city(db=db, city=city)
 
 @router.get("/cities/{city_id}", response_model=schemas.City)
 async def get_city(city_id: int, db: AsyncSession = Depends(get_db)):
